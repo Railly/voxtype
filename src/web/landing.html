@@ -317,7 +317,7 @@
       </a>
     </div>
     <div class="install-bar">
-      <code><span>$</span> npx voxtype "HELLO" -o hello.svg</code>
+      <code><span>$</span> npx @crafter/voxtype "HELLO" -o hello.svg</code>
       <button type="button" id="copy-install">Copy</button>
     </div>
   </section>
@@ -457,7 +457,7 @@
 
   <script>
     document.getElementById('copy-install').addEventListener('click', function() {
-      navigator.clipboard.writeText('npx voxtype "HELLO" -o hello.svg');
+      navigator.clipboard.writeText('npx @crafter/voxtype "HELLO" -o hello.svg');
       this.textContent = 'Copied!';
       setTimeout(() => { this.textContent = 'Copy'; }, 1500);
     });

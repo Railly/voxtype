@@ -1,29 +1,31 @@
-```
- __   __  _______  __   __  _______  __   __  _______  _______
-|  | |  ||       ||  |_|  ||       ||  | |  ||       ||       |
-|  |_|  ||   _   ||       ||_     _||  |_|  ||    _  ||    ___|
-|       ||  | |  ||       |  |   |  |       ||   |_| ||   |___
-|       ||  |_|  | |     |   |   |  |_     _||    ___||    ___|
- |     | |       ||   _   |  |   |    |   |  |   |    |   |___
-  |___|  |_______||__| |__|  |___|    |___|  |___|    |_______|
-```
+<p align="center">
+  <img src="public/vox-hero.svg" height="140" alt="VOX" />
+  <img src="public/vox-type.svg" height="140" alt="TYPE" />
+</p>
 
-**3D typography in pure SVG.** Turn any text into voxel sculptures or extruded letterforms — zero canvas, zero WebGL, just math and vectors.
+<p align="center">
+  <strong>3D typography in pure SVG.</strong><br/>
+  Turn any text into voxel sculptures or extruded letterforms — zero canvas, zero WebGL, just math and vectors.
+</p>
+
+<p align="center">
+  <a href="https://voxtype.crafter.run">Website</a> · <a href="https://voxtype.crafter.run/playground">Playground</a>
+</p>
 
 ---
 
 ## Install
 
 ```bash
-npx voxtype "HELLO"
+npx @crafter/voxtype "HELLO"
 ```
 
 Or install globally:
 
 ```bash
-npm install -g voxtype
+npm install -g @crafter/voxtype
 # or
-bun add -g voxtype
+bun add -g @crafter/voxtype
 ```
 
 ---

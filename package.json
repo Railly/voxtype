@@ -1,5 +1,5 @@
 {
-	"name": "voxtype",
+	"name": "@crafter/voxtype",
 	"version": "0.1.0",
 	"description": "3D typography in pure SVG — turns text into voxel and extruded SVG sculptures",
 	"module": "src/cli.ts",
