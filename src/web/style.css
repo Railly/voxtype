@@ -27,6 +27,10 @@ body {
 	max-width: 1400px;
 	margin: 0 auto;
 	padding: 16px 24px;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 header {
@@ -74,13 +78,17 @@ header h1 span {
 	display: grid;
 	grid-template-columns: 260px 1fr;
 	gap: 20px;
-	min-height: calc(100vh - 100px);
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
 }
 
 .controls {
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
+	overflow-y: auto;
+	min-height: 0;
 }
 
 .control-group {
@@ -315,7 +323,7 @@ input[type="checkbox"] {
 	border-radius: 12px;
 	overflow: hidden;
 	position: relative;
-	min-height: 500px;
+	min-height: 0;
 }
 
 .svg-container {
