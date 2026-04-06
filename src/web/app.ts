@@ -320,42 +320,53 @@ nobgCheck.addEventListener("change", () => {
 });
 
 const preview = $(".preview");
+const container = $("#svg-container");
 let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let baseRotY = 0;
+let baseRotX = 0;
+let currentRotY = 0;
+let currentRotX = 0;
+
+container.style.transformStyle = "preserve-3d";
+preview.style.perspective = "800px";
+preview.style.cursor = "grab";
 
 preview.addEventListener("mousedown", (e) => {
 	isDragging = true;
+	dragStartX = e.clientX;
+	dragStartY = e.clientY;
+	baseRotY = currentRotY;
+	baseRotX = currentRotX;
 	preview.style.cursor = "grabbing";
-	updateAngleFromMouse(e);
+	e.preventDefault();
 });
 
 window.addEventListener("mousemove", (e) => {
 	if (!isDragging) return;
-	updateAngleFromMouse(e);
+	const dx = e.clientX - dragStartX;
+	const dy = e.clientY - dragStartY;
+	currentRotY = baseRotY + dx * 0.5;
+	currentRotX = Math.max(-30, Math.min(30, baseRotX - dy * 0.3));
+	container.style.transform = `rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
 });
 
 window.addEventListener("mouseup", () => {
-	if (isDragging) {
-		isDragging = false;
-		preview.style.cursor = "grab";
-	}
-});
-
-preview.style.cursor = "grab";
-
-function updateAngleFromMouse(e: MouseEvent) {
-	const rect = preview.getBoundingClientRect();
-	const x = (e.clientX - rect.left) / rect.width;
-	const y = (e.clientY - rect.top) / rect.height;
-	const newAngle = Math.round(x * 360) % 360;
-	const newDepth = Math.round(1 + (1 - y) * 12);
-	state.angle = newAngle;
-	state.depth = Math.max(1, Math.min(13, newDepth));
-	$<HTMLInputElement>("#angle-slider").value = String(newAngle);
-	$("#angle-value").textContent = String(newAngle);
-	$<HTMLInputElement>("#depth-slider").value = String(state.depth);
-	$("#depth-value").textContent = String(state.depth);
-	debouncedRender(30);
-}
+	if (!isDragging) return;
+	isDragging = false;
+	preview.style.cursor = "grab";
+	const normAngle = ((Math.round(315 + currentRotY) % 360) + 360) % 360;
+	state.angle = normAngle;
+	$<HTMLInputElement>("#angle-slider").value = String(normAngle);
+	$("#angle-value").textContent = String(normAngle);
+	currentRotY = 0;
+	currentRotX = 0;
+	baseRotY = 0;
+	baseRotX = 0;
+	container.style.transform = "";
+	render();
+})
 
 loadFromURL();
 buildThemeGrid();
