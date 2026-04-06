@@ -25,6 +25,7 @@ Bun.serve({
 					mode = "voxel",
 					theme: themeName = "default",
 					projection: projName = "isometric",
+					angle = 315,
 					depth = 3,
 					resolution = 20,
 					tile = 8,
@@ -35,13 +36,14 @@ Bun.serve({
 
 				const theme = resolveTheme(themeName, plotter);
 				if (noBackground) theme.background = undefined;
-				const projection = projections[projName];
-				if (!projection) {
+				const baseProjection = projections[projName];
+				if (!baseProjection) {
 					return Response.json(
 						{ error: "Invalid projection" },
 						{ status: 400 },
 					);
 				}
+				const projection = { ...baseProjection, angle: Number(angle) };
 
 				const glyphPath = getGlyphPaths(font, text, size);
 				let svg: string;

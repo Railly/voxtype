@@ -80,6 +80,8 @@ const state = {
 	mode: "voxel",
 	theme: "default",
 	projection: "isometric",
+	angle: 315,
+	size: 72,
 	depth: 3,
 	resolution: 20,
 	tile: 8,
@@ -137,6 +139,10 @@ function buildPresets() {
 
 function syncUIToState() {
 	$<HTMLInputElement>("#text-input").value = state.text;
+	$<HTMLInputElement>("#angle-slider").value = String(state.angle);
+	$("#angle-value").textContent = String(state.angle);
+	$<HTMLInputElement>("#size-slider").value = String(state.size);
+	$("#size-value").textContent = String(state.size);
 	$<HTMLInputElement>("#depth-slider").value = String(state.depth);
 	$("#depth-value").textContent = String(state.depth);
 	$<HTMLInputElement>("#resolution-slider").value = String(state.resolution);
@@ -227,11 +233,15 @@ function loadFromURL() {
 	if (params.has("mode")) state.mode = params.get("mode")!;
 	if (params.has("theme")) state.theme = params.get("theme")!;
 	if (params.has("projection")) state.projection = params.get("projection")!;
+	if (params.has("angle")) state.angle = Number(params.get("angle"));
+	if (params.has("size")) state.size = Number(params.get("size"));
 	if (params.has("depth")) state.depth = Number(params.get("depth"));
 	if (params.has("resolution"))
 		state.resolution = Number(params.get("resolution"));
 	if (params.has("tile")) state.tile = Number(params.get("tile"));
 	if (params.has("plotter")) state.plotter = params.get("plotter") === "true";
+	if (params.has("noBackground"))
+		state.noBackground = params.get("noBackground") === "true";
 }
 
 async function render() {
@@ -315,6 +325,8 @@ buildPresets();
 syncUIToState();
 setupToggles("mode-toggle", "mode");
 setupToggles("projection-toggle", "projection");
+setupSlider("angle-slider", "angle-value", "angle");
+setupSlider("size-slider", "size-value", "size");
 setupSlider("depth-slider", "depth-value", "depth");
 setupSlider("resolution-slider", "resolution-value", "resolution");
 setupSlider("tile-slider", "tile-value", "tile");
