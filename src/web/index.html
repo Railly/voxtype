@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>voxtype — 3D typography in pure SVG</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>voxtype</h1>
+      <p class="subtitle">3D typography in pure SVG</p>
+    </header>
+
+    <div class="layout">
+      <aside class="controls">
+        <div class="control-group">
+          <label for="text-input">Text</label>
+          <input type="text" id="text-input" value="HELLO" spellcheck="false" autocomplete="off">
+        </div>
+
+        <div class="control-group">
+          <label>Presets</label>
+          <div class="presets" id="presets"></div>
+        </div>
+
+        <div class="control-group">
+          <label>Mode</label>
+          <div class="toggle-group" id="mode-toggle">
+            <button type="button" class="toggle active" data-value="voxel">Voxel</button>
+            <button type="button" class="toggle" data-value="extrude">Extrude</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>Theme</label>
+          <div class="theme-grid" id="theme-grid"></div>
+        </div>
+
+        <div class="control-group">
+          <label>Projection</label>
+          <div class="toggle-group" id="projection-toggle">
+            <button type="button" class="toggle active" data-value="isometric">Isometric</button>
+            <button type="button" class="toggle" data-value="oblique">Oblique</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label for="depth-slider">Depth <span id="depth-value">3</span></label>
+          <input type="range" id="depth-slider" min="1" max="20" value="3">
+        </div>
+
+        <div class="control-group" id="resolution-group">
+          <label for="resolution-slider">Resolution <span id="resolution-value">20</span></label>
+          <input type="range" id="resolution-slider" min="8" max="32" value="20">
+        </div>
+
+        <div class="control-group">
+          <label for="tile-slider">Tile Size <span id="tile-value">8</span></label>
+          <input type="range" id="tile-slider" min="4" max="20" value="8">
+        </div>
+
+        <div class="control-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="plotter-check">
+            Plotter mode
+          </label>
+        </div>
+
+        <div class="file-info">
+          <span id="file-size">-</span>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="download-btn">Download SVG</button>
+          <button type="button" id="copy-btn">Copy SVG</button>
+          <button type="button" id="share-btn">Share URL</button>
+        </div>
+      </aside>
+
+      <main class="preview">
+        <div id="svg-container" class="svg-container"></div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="./app.ts"></script>
+</body>
+</html>

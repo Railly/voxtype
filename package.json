@@ -1,0 +1,65 @@
+{
+	"name": "voxtype",
+	"version": "0.1.0",
+	"description": "3D typography in pure SVG — turns text into voxel and extruded SVG sculptures",
+	"module": "src/cli.ts",
+	"type": "module",
+	"bin": {
+		"voxtype": "src/cli.ts"
+	},
+	"files": [
+		"src/cli.ts",
+		"src/extrude.ts",
+		"src/font.ts",
+		"src/geometry.ts",
+		"src/rasterize.ts",
+		"src/scene.ts",
+		"src/themes.ts"
+	],
+	"exports": {
+		".": "./src/cli.ts",
+		"./extrude": "./src/extrude.ts",
+		"./font": "./src/font.ts",
+		"./geometry": "./src/geometry.ts",
+		"./rasterize": "./src/rasterize.ts",
+		"./scene": "./src/scene.ts",
+		"./themes": "./src/themes.ts"
+	},
+	"scripts": {
+		"dev": "bun --hot src/server.ts",
+		"cli": "bun run src/cli.ts",
+		"check": "biome check --write ."
+	},
+	"keywords": [
+		"svg",
+		"typography",
+		"3d",
+		"voxel",
+		"extrude",
+		"isometric",
+		"text",
+		"generative",
+		"cli",
+		"font"
+	],
+	"author": "Railly Hugo",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Railly/voxtype"
+	},
+	"homepage": "https://github.com/Railly/voxtype#readme",
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.10",
+		"@types/bun": "latest",
+		"@types/opentype.js": "^1.3.9"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"commander": "^14.0.3",
+		"heerich": "^0.10.0",
+		"opentype.js": "^1.3.4"
+	}
+}
