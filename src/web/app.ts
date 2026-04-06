@@ -17,6 +17,7 @@ const presets: Record<string, Partial<typeof state>> = {
 		depth: 4,
 		resolution: 18,
 		tile: 10,
+		plotter: false,
 	},
 	sticker: {
 		text: "HELLO",
@@ -25,6 +26,7 @@ const presets: Record<string, Partial<typeof state>> = {
 		depth: 2,
 		resolution: 14,
 		tile: 12,
+		plotter: false,
 	},
 	"pen-plotter": {
 		text: "PLOTTER",
@@ -42,13 +44,34 @@ const presets: Record<string, Partial<typeof state>> = {
 		depth: 5,
 		resolution: 10,
 		tile: 14,
+		plotter: false,
 	},
-	smooth: {
-		text: "HUNTER",
-		mode: "extrude",
+	neon: {
+		text: "NEON",
+		mode: "voxel",
 		theme: "dracula",
-		depth: 8,
+		depth: 3,
+		resolution: 16,
 		tile: 10,
+		plotter: false,
+	},
+	chunky: {
+		text: "BIG",
+		mode: "voxel",
+		theme: "one-hunter",
+		depth: 6,
+		resolution: 8,
+		tile: 18,
+		plotter: false,
+	},
+	minimal: {
+		text: "MONO",
+		mode: "voxel",
+		theme: "mono-dark",
+		depth: 2,
+		resolution: 20,
+		tile: 8,
+		plotter: false,
 	},
 };
 
@@ -61,6 +84,7 @@ const state = {
 	resolution: 20,
 	tile: 8,
 	plotter: false,
+	noBackground: true,
 };
 
 let currentSvg = "";
@@ -120,6 +144,7 @@ function syncUIToState() {
 	$<HTMLInputElement>("#tile-slider").value = String(state.tile);
 	$("#tile-value").textContent = String(state.tile);
 	$<HTMLInputElement>("#plotter-check").checked = state.plotter;
+	$<HTMLInputElement>("#nobg-check").checked = state.noBackground;
 
 	document.querySelectorAll("#mode-toggle .toggle").forEach((b) => {
 		b.classList.toggle(
@@ -275,6 +300,12 @@ textInput.addEventListener("input", () => {
 const plotterCheck = $<HTMLInputElement>("#plotter-check");
 plotterCheck.addEventListener("change", () => {
 	state.plotter = plotterCheck.checked;
+	render();
+});
+
+const nobgCheck = $<HTMLInputElement>("#nobg-check");
+nobgCheck.addEventListener("change", () => {
+	state.noBackground = nobgCheck.checked;
 	render();
 });
 

@@ -3,14 +3,20 @@ import { getGlyphPaths, loadFont } from "./font.ts";
 import { rasterizeGlyphs } from "./rasterize.ts";
 import { buildVoxelScene, projections, renderSVG } from "./scene.ts";
 import { resolveTheme } from "./themes.ts";
-import index from "./web/index.html";
+import playground from "./web/index.html";
 
 const font = loadFont();
+const landingHtml = await Bun.file(
+	`${import.meta.dir}/web/landing.html`,
+).text();
 
 Bun.serve({
 	port: 3333,
 	routes: {
-		"/": index,
+		"/": new Response(landingHtml, {
+			headers: { "Content-Type": "text/html; charset=utf-8" },
+		}),
+		"/playground": playground,
 		"/api/render": {
 			POST: async (req) => {
 				const body = await req.json();
@@ -24,9 +30,11 @@ Bun.serve({
 					tile = 8,
 					size = 72,
 					plotter = false,
+					noBackground = true,
 				} = body;
 
 				const theme = resolveTheme(themeName, plotter);
+				if (noBackground) theme.background = undefined;
 				const projection = projections[projName];
 				if (!projection) {
 					return Response.json(
@@ -57,6 +65,14 @@ Bun.serve({
 				});
 			},
 		},
+	},
+	fetch(req) {
+		const url = new URL(req.url);
+		if (url.pathname.startsWith("/assets/")) {
+			const filePath = `${import.meta.dir}/web${url.pathname}`;
+			return new Response(Bun.file(filePath));
+		}
+		return new Response("Not found", { status: 404 });
 	},
 	development: { hmr: true, console: true },
 });

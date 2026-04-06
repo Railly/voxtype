@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>voxtype — 3D typography in pure SVG</title>
+  <meta name="description" content="Turn any text into 3D voxel typography as pure SVG. CLI tool, 8 themes, pen plotter mode. Zero WebGL.">
+  <meta property="og:title" content="voxtype — 3D typography in pure SVG">
+  <meta property="og:description" content="Turn any text into 3D voxel typography as pure SVG. CLI tool, 8 themes, pen plotter mode.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #09090b;
+      --surface: #18181b;
+      --border: #27272a;
+      --text: #fafafa;
+      --muted: #71717a;
+      --accent: #f59e0b;
+      --accent-dim: rgba(245, 158, 11, 0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 11, 0.8);
+      backdrop-filter: blur(12px);
+    }
+    nav .inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 24px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 16px; letter-spacing: -0.02em;
+      color: var(--text); text-decoration: none;
+    }
+    nav .logo span { color: var(--accent); }
+    nav .links { display: flex; gap: 24px; align-items: center; }
+    nav .links a {
+      color: var(--muted); text-decoration: none; font-size: 14px;
+      transition: color 0.15s;
+    }
+    nav .links a:hover { color: var(--text); }
+    nav .gh-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 6px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-size: 13px; text-decoration: none;
+      transition: border-color 0.15s;
+    }
+    nav .gh-btn:hover { border-color: var(--muted); }
+
+    /* HERO */
+    .hero {
+      position: relative; padding: 140px 24px 80px;
+      text-align: center; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-svgs {
+      display: flex; justify-content: center; align-items: center;
+      gap: -8px; margin-bottom: 48px; position: relative;
+    }
+    .hero-svgs img {
+      height: 200px; width: auto;
+      filter: drop-shadow(0 20px 40px rgba(245,158,11,0.15));
+      transition: transform 0.3s;
+    }
+    .hero-svgs img:first-child { margin-right: -16px; }
+    .hero-svgs img:hover { transform: translateY(-8px); }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800; letter-spacing: -0.03em;
+      line-height: 1.1; margin-bottom: 16px;
+    }
+    .hero h1 .gradient {
+      background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero .sub {
+      font-size: 18px; color: #a1a1aa; max-width: 520px;
+      margin: 0 auto 32px; line-height: 1.6;
+    }
+    .hero .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 8px;
+      background: var(--accent); color: #09090b; font-weight: 600;
+      font-weight: 600; font-size: 14px; text-decoration: none;
+      transition: opacity 0.15s; border: none; cursor: pointer;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-weight: 500; font-size: 14px;
+      text-decoration: none; transition: border-color 0.15s; cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--muted); }
+
+    /* INSTALL BAR */
+    .install-bar {
+      max-width: 480px; margin: 32px auto 0;
+      display: flex; align-items: center;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px; gap: 12px;
+    }
+    .install-bar code {
+      flex: 1; font-family: 'JetBrains Mono', monospace;
+      font-size: 14px; color: var(--muted);
+    }
+    .install-bar code span { color: var(--accent); }
+    .install-bar button {
+      padding: 6px 12px; border-radius: 6px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--muted); font-size: 12px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .install-bar button:hover { color: var(--text); border-color: var(--muted); }
+
+    /* GALLERY */
+    .gallery {
+      padding: 80px 24px; border-top: 1px solid var(--border);
+    }
+    .gallery .inner { max-width: 1200px; margin: 0 auto; }
+    .gallery h2 {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 40px;
+    }
+    .gallery-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .gallery-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; background: var(--surface);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .gallery-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .gallery-card .preview {
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px; min-height: 200px;
+    }
+    .gallery-card .preview img { max-width: 100%; max-height: 160px; }
+    .gallery-card .meta {
+      padding: 16px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .gallery-card .meta .name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 500;
+    }
+    .gallery-card .meta .cmd {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--muted);
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 80px 24px; border-top: 1px solid var(--border);
+    }
+    .features .inner { max-width: 1200px; margin: 0 auto; }
+    .features h2 {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 40px;
+    }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      padding: 24px; border: 1px solid var(--border);
+      border-radius: 12px; background: var(--surface);
+    }
+    .feature-card .tag {
+      display: inline-block; padding: 4px 10px; border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      border: 1px solid var(--border); color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 16px; font-weight: 600; margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px; color: var(--muted); line-height: 1.5;
+    }
+
+    /* THEMES STRIP */
+    .themes-strip {
+      padding: 60px 24px; border-top: 1px solid var(--border);
+    }
+    .themes-strip .inner { max-width: 1200px; margin: 0 auto; }
+    .themes-strip h2 {
+      font-size: 12px; font-family: 'JetBrains Mono', monospace;
+      color: var(--muted); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 24px;
+    }
+    .swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+    .swatch {
+      display: flex; border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border); cursor: default;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .swatch:hover { transform: scale(1.05); border-color: var(--accent); }
+    .swatch div { width: 32px; height: 48px; }
+    .swatch-label {
+      padding: 0 14px; display: flex; align-items: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      color: var(--muted); background: var(--surface);
+    }
+
+    /* CTA */
+    .cta {
+      padding: 80px 24px; border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .cta .inner { max-width: 600px; margin: 0 auto; }
+    .cta h2 { font-size: 28px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .cta p { color: var(--muted); font-size: 16px; margin-bottom: 24px; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px; text-align: center;
+    }
+    footer p {
+      font-size: 13px; color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    .powered-by {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; margin-bottom: 24px;
+    }
+    .powered-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--muted); font-family: 'JetBrains Mono', monospace;
+    }
+    .powered-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 8px 16px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text); font-size: 14px; text-decoration: none;
+      transition: border-color 0.15s;
+    }
+    .powered-link:hover { border-color: var(--accent); }
+    .powered-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+    }
+    .powered-handle {
+      color: var(--muted); font-size: 13px;
+    }
+
+    @media (max-width: 640px) {
+      .hero-svgs img { height: 100px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="inner">
+      <a href="/" class="logo">vox<span>type</span></a>
+      <div class="links">
+        <a href="/playground">Playground</a>
+        <a href="https://github.com/Railly/voxtype" target="_blank" rel="noreferrer" class="gh-btn">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-svgs">
+      <img src="/assets/vox-hero.svg" alt="VOX in 3D voxel typography" />
+      <img src="/assets/vox-type.svg" alt="TYPE in 3D voxel typography" />
+    </div>
+    <h1>3D typography in <span class="gradient">pure SVG</span></h1>
+    <p class="sub">
+      Turn any text into voxel sculptures. Zero WebGL, zero Canvas.
+      Just SVG you can print, plot, or embed anywhere.
+    </p>
+    <div class="actions">
+      <a href="/playground" class="btn-primary">Open Playground</a>
+      <a href="https://github.com/Railly/voxtype" target="_blank" rel="noreferrer" class="btn-secondary">
+        View Source
+      </a>
+    </div>
+    <div class="install-bar">
+      <code><span>$</span> npx voxtype "HELLO" -o hello.svg</code>
+      <button type="button" id="copy-install">Copy</button>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <div class="inner">
+      <h2>Gallery</h2>
+      <div class="gallery-grid">
+        <div class="gallery-card">
+          <div class="preview"><img src="/assets/vox-3d.svg" alt="3D text" /></div>
+          <div class="meta">
+            <span class="name">Dracula</span>
+            <span class="cmd">--theme dracula --depth 5</span>
+          </div>
+        </div>
+        <div class="gallery-card">
+          <div class="preview"><img src="/assets/vox-svg.svg" alt="SVG text" /></div>
+          <div class="meta">
+            <span class="name">Emerald</span>
+            <span class="cmd">--theme emerald --depth 2</span>
+          </div>
+        </div>
+        <div class="gallery-card">
+          <div class="preview"><img src="/assets/vox-hi.svg" alt="HI text" /></div>
+          <div class="meta">
+            <span class="name">Sunset</span>
+            <span class="cmd">--theme sunset --depth 3</span>
+          </div>
+        </div>
+        <div class="gallery-card">
+          <div class="preview" style="background:#fafafa; border-radius:12px 12px 0 0;"><img src="/assets/vox-plotter.svg" alt="PLOT plotter text" /></div>
+          <div class="meta">
+            <span class="name">Plotter</span>
+            <span class="cmd">--plotter --theme default</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="themes-strip">
+    <div class="inner">
+      <h2>8 Built-in Themes</h2>
+      <div class="swatches">
+        <div class="swatch">
+          <div style="background:#93c5fd"></div><div style="background:#60a5fa"></div><div style="background:#3b82f6"></div>
+          <span class="swatch-label">default</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#cba6f7"></div><div style="background:#b4befe"></div><div style="background:#89b4fa"></div>
+          <span class="swatch-label">catppuccin</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#e06c75"></div><div style="background:#c678dd"></div><div style="background:#61afef"></div>
+          <span class="swatch-label">one-hunter</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#ff79c6"></div><div style="background:#bd93f9"></div><div style="background:#8be9fd"></div>
+          <span class="swatch-label">dracula</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#e5e5e5"></div><div style="background:#a3a3a3"></div><div style="background:#737373"></div>
+          <span class="swatch-label">mono</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#525252"></div><div style="background:#404040"></div><div style="background:#262626"></div>
+          <span class="swatch-label">mono-dark</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#6ee7b7"></div><div style="background:#34d399"></div><div style="background:#10b981"></div>
+          <span class="swatch-label">emerald</span>
+        </div>
+        <div class="swatch">
+          <div style="background:#fbbf24"></div><div style="background:#f59e0b"></div><div style="background:#ef4444"></div>
+          <span class="swatch-label">sunset</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="inner">
+      <h2>How it works</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="tag">cli</span>
+          <h3>One command</h3>
+          <p>Type text, get SVG. Pipe to file, stdout, or clipboard. Works with any font on your system.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">pure svg</span>
+          <h3>Zero runtime</h3>
+          <p>Output is a single SVG file. No JavaScript, no WebGL, no Canvas. Embeds in any HTML, Figma, or Notion page.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">voxel</span>
+          <h3>Rasterize to voxels</h3>
+          <p>Glyphs are rasterized via winding number fill, then converted to isometric voxel blocks with heerich.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">plotter</span>
+          <h3>Pen plotter ready</h3>
+          <p>Stroke-only mode with no fills. Export SVG and send directly to your AxiDraw or any pen plotter.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">projections</span>
+          <h3>Isometric + oblique</h3>
+          <p>Choose your perspective. Isometric for clean blocks, oblique for dramatic depth.</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">themes</span>
+          <h3>8 color palettes</h3>
+          <p>From Catppuccin to Dracula to Monochrome. Each theme defines top, front, and side face colors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="inner">
+      <h2>Try it now</h2>
+      <p>Open the playground and type anything. Download or copy the SVG in one click.</p>
+      <a href="/playground" class="btn-primary">Open Playground</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="powered-by">
+      <span class="powered-label">Powered by</span>
+      <a href="https://github.com/meodai/heerich" target="_blank" rel="noreferrer" class="powered-link">
+        <img src="/assets/meodai.jpg" alt="David Aerne" class="powered-avatar" />
+        <span><strong>heerich</strong> by David Aerne <span class="powered-handle">@meodai</span></span>
+      </a>
+    </div>
+    <p>Built by <a href="https://github.com/Railly" target="_blank" rel="noreferrer">Railly Hugo</a>. MIT License.</p>
+  </footer>
+
+  <script>
+    document.getElementById('copy-install').addEventListener('click', function() {
+      navigator.clipboard.writeText('npx voxtype "HELLO" -o hello.svg');
+      this.textContent = 'Copied!';
+      setTimeout(() => { this.textContent = 'Copy'; }, 1500);
+    });
+  </script>
+</body>
+</html>
