@@ -141,8 +141,6 @@ function syncUIToState() {
 	$<HTMLInputElement>("#text-input").value = state.text;
 	$<HTMLInputElement>("#angle-slider").value = String(state.angle);
 	$("#angle-value").textContent = String(state.angle);
-	$<HTMLInputElement>("#size-slider").value = String(state.size);
-	$("#size-value").textContent = String(state.size);
 	$<HTMLInputElement>("#depth-slider").value = String(state.depth);
 	$("#depth-value").textContent = String(state.depth);
 	$<HTMLInputElement>("#resolution-slider").value = String(state.resolution);
@@ -327,7 +325,6 @@ syncUIToState();
 setupToggles("mode-toggle", "mode");
 setupToggles("projection-toggle", "projection");
 setupSlider("angle-slider", "angle-value", "angle");
-setupSlider("size-slider", "size-value", "size");
 setupSlider("depth-slider", "depth-value", "depth");
 setupSlider("resolution-slider", "resolution-value", "resolution");
 setupSlider("tile-slider", "tile-value", "tile");
