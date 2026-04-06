@@ -1,6 +1,12 @@
 import opentype from "opentype.js";
 
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 const DEFAULT_FONT_PATHS = [
+	resolve(__dirname, "../fonts/Inter-Bold.ttf"),
 	"/System/Library/Fonts/SFNS.ttf",
 	"/System/Library/Fonts/Supplemental/Arial.ttf",
 	"/System/Library/Fonts/Geneva.ttf",
