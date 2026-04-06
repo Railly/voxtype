@@ -214,9 +214,9 @@ function setupSlider(
 	});
 }
 
-function debouncedRender() {
+function debouncedRender(delay = 150) {
 	if (debounceTimer) clearTimeout(debounceTimer);
-	debounceTimer = setTimeout(render, 150);
+	debounceTimer = setTimeout(render, delay);
 }
 
 function updateURL() {
@@ -354,7 +354,7 @@ function updateAngleFromMouse(e: MouseEvent) {
 	$("#angle-value").textContent = String(newAngle);
 	$<HTMLInputElement>("#depth-slider").value = String(state.depth);
 	$("#depth-value").textContent = String(state.depth);
-	debouncedRender();
+	debouncedRender(30);
 }
 
 loadFromURL();
