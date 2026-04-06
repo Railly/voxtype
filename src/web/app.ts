@@ -319,6 +319,44 @@ nobgCheck.addEventListener("change", () => {
 	render();
 });
 
+const preview = $(".preview");
+let isDragging = false;
+
+preview.addEventListener("mousedown", (e) => {
+	isDragging = true;
+	preview.style.cursor = "grabbing";
+	updateAngleFromMouse(e);
+});
+
+window.addEventListener("mousemove", (e) => {
+	if (!isDragging) return;
+	updateAngleFromMouse(e);
+});
+
+window.addEventListener("mouseup", () => {
+	if (isDragging) {
+		isDragging = false;
+		preview.style.cursor = "grab";
+	}
+});
+
+preview.style.cursor = "grab";
+
+function updateAngleFromMouse(e: MouseEvent) {
+	const rect = preview.getBoundingClientRect();
+	const x = (e.clientX - rect.left) / rect.width;
+	const y = (e.clientY - rect.top) / rect.height;
+	const newAngle = Math.round(x * 360) % 360;
+	const newDepth = Math.round(1 + (1 - y) * 12);
+	state.angle = newAngle;
+	state.depth = Math.max(1, Math.min(13, newDepth));
+	$<HTMLInputElement>("#angle-slider").value = String(newAngle);
+	$("#angle-value").textContent = String(newAngle);
+	$<HTMLInputElement>("#depth-slider").value = String(state.depth);
+	$("#depth-value").textContent = String(state.depth);
+	debouncedRender();
+}
+
 loadFromURL();
 buildThemeGrid();
 buildPresets();
